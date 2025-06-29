@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UFC 5 Web Game</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Orbitron", sans-serif;
+        background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+        color: white;
+        overflow-x: hidden;
+        perspective: 1000px;
+      }
+      .lobby,
+      .arena {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        transform-style: preserve-3d;
+      }
+      .lobby {
+        margin-bottom: 10000px;
+        background: linear-gradient(135deg, #111 0%, #222 100%);
+        padding: 20px;
+        overflow-y: scroll;
+        height: 2000px;
+      }
+      .lobby h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        text-shadow: 0 0 20px #ff4444;
+        color: #ff4444;
+        font-weight: 900;
+        transform: translateZ(50px);
+        animation: titlePulse 2s infinite alternate;
+      }
+      .lobby h2 {
+        font-size: 1.5rem;
+        margin: 30px 0 20px 0;
+        color: #ffaa00;
+        transform: translateZ(30px);
+      }
+      .fighter-select {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 20px;
+        max-width: 800px;
+        transform-style: preserve-3d;
+      }
+      .fighter-card {
+        cursor: pointer;
+        text-align: center;
+        width: 140px;
+        height: 180px;
+        border: 3px solid #444;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #333 0%, #555 100%);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        transform: translateZ(20px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+      .fighter-card:hover {
+        border-color: #ff4444;
+        transform: translateZ(30px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(255, 68, 68, 0.4);
+      }
+      .fighter-card.selected {
+        border-color: #00ffaa;
+        background: linear-gradient(135deg, #004d40 0%, #00695c 100%);
+        box-shadow: 0 0 30px rgba(0, 255, 170, 0.7);
+        animation: selectedPulse 1.5s infinite;
+      }
+      .fighter-card img {
+        width: 100px;
+        height: 100px;
+        border: 2px solid #666;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+        transform: translateZ(10px);
+        
+      }
+      .fighter-card:hover img {
+        transform: translateZ(20px) scale(1.1);
+      }
+      .fighter-card p {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 0 5px;
+        transform: translateZ(10px);
+      }
+      .start-fight-btn {
+        margin-top: 40px;
+        padding: 15px 40px;
+        font-size: 1.5rem;
+        background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(255, 68, 68, 0.4);
+        transform: translateZ(30px);
+        position: relative;
+        overflow: hidden;
+      }
+      .start-fight-btn:hover {
+        transform: translateZ(40px) translateY(-3px);
+        box-shadow: 0 15px 30px rgba(255, 68, 68, 0.6);
+      }
+      .start-fight-btn:disabled {
+        background: #666;
+        cursor: not-allowed;
+        transform: translateZ(30px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+      .start-fight-btn:before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          to bottom right,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0) 45%,
+          rgba(255, 255, 255, 0.5) 48%,
+          rgba(255, 255, 255, 0.8) 50%,
+          rgba(255, 255, 255, 0.5) 52%,
+          rgba(255, 255, 255, 0) 55%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: rotate(30deg);
+        animation: shine 3s infinite;
+      }
+      .start-fight-btn:disabled:before {
+        display: none;
+      }
+      .arena {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        position: relative;
+        border: 10px solid #444;
+        background-image: radial-gradient(
+            circle at 25% 25%,
+            #333 2px,
+            transparent 2px
+          ),
+          radial-gradient(circle at 75% 75%, #333 2px, transparent 2px);
+        background-size: 50px 50px;
+        overflow: hidden;
+        transform-style: preserve-3d;
+      }
+      .arena:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          circle at center,
+          transparent 0%,
+          rgba(0, 0, 0, 0.8) 100%
+        );
+        z-index: 1;
+      }
+      .fighter {
+        position: absolute;
+        bottom: 80px;
+        width:auto;
+        height: auto;
+        border-radius: 0;
+        background: none;
+        color: black;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        border: 5px solid #666;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        transition: all 0.3s ease;
+        transform-style: preserve-3d;
+        z-index: 2;
+      }
+      .fighter img {
+        max-width: 300px;
+        max-height: 300px;
+        width: fit-content,;
+  height: fit-content;
+  border-radius: 0; /* ← Remove circular crop */
+  object-fit: cover; /* or contain */
+        transform: translateZ(20px);
+        transition: all 0.3s ease;
+      }
+      .fighter.left {
+        left: 100px;
+        transform: translateZ(50px);
+      }
+      .fighter.right {
+        right: 100px;
+        transform: translateZ(50px);
+      }
+      .fighter.attacking {
+        animation: attackAnimation 0.3s forwards;
+      }
+      .fighter.punching {
+        animation: punchAnimation 0.3s forwards;
+      }
+      .fighter.kicking {
+        animation: kickAnimation 0.4s forwards;
+      }
+      .fighter.blocking {
+        border-color: #00ffaa;
+        box-shadow: 0 0 40px #00ffaa;
+        animation: blockAnimation 0.5s forwards;
+      }
+      .fighter.hit {
+        animation: hitAnimation 0.5s forwards;
+      }
+      .fighter.knockout {
+        animation: knockoutAnimation 1s forwards;
+      }
+      .controls {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateZ(50px);
+        display: flex;
+        gap: 15px;
+        z-index: 3;
+      }
+      .controls button {
+        padding: 15px 25px;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        transform-style: preserve-3d;
+        transform: translateZ(20px);
+        position: relative;
+        overflow: hidden;
+      }
+      .controls button:hover {
+        transform: translateZ(30px) translateY(-3px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+      }
+      .controls button:active {
+        transform: translateZ(20px) translateY(0);
+      }
+      .controls button:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          to bottom right,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0) 45%,
+          rgba(255, 255, 255, 0.3) 48%,
+          rgba(255, 255, 255, 0.5) 50%,
+          rgba(255, 255, 255, 0.3) 52%,
+          rgba(255, 255, 255, 0) 55%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: rotate(30deg);
+        animation: shine 3s infinite;
+      }
+      .health {
+        position: absolute;
+        top: 30px;
+        width: 350px;
+        height: 30px;
+        background: #333;
+        border: 3px solid #666;
+        border-radius: 15px;
+        overflow: hidden;
+        transform: translateZ(50px);
+        z-index: 3;
+      }
+      .health .bar {
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          #00ff00 0%,
+          #ffff00 50%,
+          #ff0000 100%
+        );
+        transition: width 0.5s ease;
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+      }
+      .health .bar:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.3) 0%,
+          rgba(255, 255, 255, 0) 50%,
+          rgba(0, 0, 0, 0.1) 51%,
+          rgba(0, 0, 0, 0) 100%
+        );
+      }
+      .health .label {
+        position: absolute;
+        top: -25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #ccc;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      }
+      #p1-health {
+        left: 30px;
+      }
+      #p2-health {
+        right: 30px;
+      }
+      #p1-stamina {
+        left: 30px;
+      }
+      #p2-stamina {
+        right: 30px;
+      }
+      .game-over {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) translateZ(100px);
+        background: rgba(0, 0, 0, 0.9);
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        border: 3px solid #ff4444;
+        display: none;
+        z-index: 10;
+        box-shadow: 0 0 50px rgba(255, 68, 68, 0.7);
+        animation: gameOverAppear 0.5s forwards;
+      }
+      .game-over h2 {
+        font-size: 3rem;
+        margin: 0 0 20px 0;
+        color: #ff4444;
+        text-shadow: 0 0 20px #ff4444;
+        animation: winnerPulse 2s infinite;
+      }
+      .game-over button {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 600;
+        margin: 10px;
+        transform: translateZ(30px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      }
+      .game-over button:hover {
+        transform: translateZ(40px) translateY(-3px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+      }
+      .octagon {
+        position: absolute;
+        width: 80%;
+        height: 60%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 10px solid rgba(255, 255, 255, 0.1);
+        clip-path: polygon(
+          30% 0%,
+          70% 0%,
+          100% 30%,
+          100% 70%,
+          70% 100%,
+          30% 100%,
+          0% 70%,
+          0% 30%
+        );
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) translateZ(0);
+        z-index: 1;
+      }
+      .crowd {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 30%;
+        background: linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.8) 0%,
+          transparent 100%
+        );
+        z-index: 0;
+        overflow: hidden;
+      }
+      .crowd:before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(
+            circle at 10% 80%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 20% 70%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 30% 90%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 40% 60%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 50% 80%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 60% 70%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 70% 90%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 80% 60%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 90% 80%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          );
+        background-size: 50px 50px;
+        animation: crowdCheer 0.5s infinite alternate;
+      }
+      .spotlight {
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle at center,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 50%
+        );
+        top: -50%;
+        left: -50%;
+        animation: spotlightMove 10s infinite alternate;
+        z-index: 0;
+      }
+      .hit-effect {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 0, 0, 0.7) 0%,
+          transparent 70%
+        );
+        border-radius: 50%;
+        transform: scale(0);
+        opacity: 0;
+        z-index: 5;
+      }
+      .blood-effect {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: radial-gradient(
+          circle,
+          rgba(200, 0, 0, 0.8) 0%,
+          transparent 70%
+        );
+        border-radius: 50%;
+        opacity: 0;
+        z-index: 4;
+      }
+      @keyframes titlePulse {
+        0% {
+          transform: translateZ(50px) scale(1);
+        }
+        100% {
+          transform: translateZ(50px) scale(1.05);
+        }
+      }
+      @keyframes selectedPulse {
+        0% {
+          box-shadow: 0 0 20px rgba(0, 255, 170, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 30px rgba(0, 255, 170, 0.8);
+        }
+        100% {
+          box-shadow: 0 0 20px rgba(0, 255, 170, 0.5);
+        }
+      }
+      @keyframes shine {
+        0% {
+          transform: translateX(-100%) rotate(30deg);
+        }
+        100% {
+          transform: translateX(100%) rotate(30deg);
+        }
+      }
+      @keyframes attackAnimation {
+        0% {
+          transform: translateZ(50px);
+        }
+        50% {
+          transform: translateZ(50px) translateX(30px) scale(1.1);
+        }
+        100% {
+          transform: translateZ(50px);
+        }
+      }
+      @keyframes punchAnimation {
+        0% {
+          transform: translateZ(50px) rotateY(0);
+        }
+        30% {
+          transform: translateZ(50px) rotateY(-20deg) translateX(20px);
+        }
+        70% {
+          transform: translateZ(50px) rotateY(10deg) translateX(40px);
+        }
+        100% {
+          transform: translateZ(50px) rotateY(0);
+        }
+      }
+      @keyframes kickAnimation {
+        0% {
+          transform: translateZ(50px) rotateY(0) rotateX(0);
+        }
+        30% {
+          transform: translateZ(50px) rotateY(-15deg) rotateX(20deg)
+            translateY(-20px);
+        }
+        70% {
+          transform: translateZ(50px) rotateY(10deg) rotateX(-10deg)
+            translateY(10px) translateX(30px);
+        }
+        100% {
+          transform: translateZ(50px) rotateY(0) rotateX(0);
+        }
+      }
+      @keyframes blockAnimation {
+        0% {
+          transform: translateZ(50px) scale(1);
+        }
+        50% {
+          transform: translateZ(50px) scale(1.05);
+        }
+        100% {
+          transform: translateZ(50px) scale(1);
+        }
+      }
+      @keyframes hitAnimation {
+        0% {
+          transform: translateZ(50px);
+        }
+        25% {
+          transform: translateZ(50px) translateX(-10px);
+        }
+        50% {
+          transform: translateZ(50px) translateX(10px);
+        }
+        75% {
+          transform: translateZ(50px) translateX(-5px);
+        }
+        100% {
+          transform: translateZ(50px);
+        }
+      }
+      @keyframes knockoutAnimation {
+        0% {
+          transform: translateZ(50px) rotate(0);
+        }
+        100% {
+          transform: translateZ(50px) rotate(180deg) translateY(300px);
+        }
+      }
+      @keyframes winnerPulse {
+        0% {
+          text-shadow: 0 0 10px #ff4444;
+        }
+        50% {
+          text-shadow: 0 0 30px #ff4444;
+        }
+        100% {
+          text-shadow: 0 0 10px #ff4444;
+        }
+      }
+      @keyframes gameOverAppear {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translateZ(100px) scale(0.5);
+        }
+        100% {
+          opacity: 1;
+          transform: translate(-50%, -50%) translateZ(100px) scale(1);
+        }
+      }
+      @keyframes crowdCheer {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(5px);
+        }
+      }
+      @keyframes spotlightMove {
+        0% {
+          transform: translate(-25%, -25%);
+        }
+        25% {
+          transform: translate(-75%, -25%);
+        }
+        50% {
+          transform: translate(-75%, -75%);
+        }
+        75% {
+          transform: translate(-25%, -75%);
+        }
+        100% {
+          transform: translate(-25%, -25%);
+        }
+      }
+      @keyframes hitFlash {
+        0% {
+          transform: scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1.5);
+          opacity: 0;
+        }
+      }
+      @keyframes bloodSplat {
+        0% {
+          transform: scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1.5);
+          opacity: 0;
+        }
+      }
+      #vs-text {
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(60px);
+  font-size: 4rem;
+  font-weight: 900;
+  color: red;
+  text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+  z-index: 3;
+  animation: pulseVS 1.5s infinite;
+}
+
+@keyframes pulseVS {
+  0%, 100% {
+    transform: translateX(-50%) scale(1) translateZ(60px);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.2) translateZ(60px);
+    opacity: 0.6;
+  }
+}
+#action-log {
+  position: absolute;
+  bottom: 150px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(60px);
+  font-size: 2rem;
+  color: #ffffff;
+  text-shadow: 0 0 10px #ff0000;
+  font-weight: bold;
+  z-index: 4;
+  pointer-events: none;
+  animation: fadeOut 2s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateZ(60px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateZ(60px) scale(1.2);
+  }
+}
+
+
+    </style>
+  </head>
+  <body>
+    <audio id="punch-sound" src="./wiko us.mp3"></audio>
+<audio id="kick-sound" src="./kick-183936.mp3"></audio>
+<audio id="block-sound" src="./block-6839.mp3"></audio>
+<audio id="ko-sound" src="./oe abara.mp3"></audio>
+
+    <div class="lobby" id="lobby">
+      <h1>ULTIMATE FIGHTING CHAMPIONSHIP</h1>
+      <h2>Select Your Fighter</h2>
+      <div class="fighter-select" id="fighter-select"></div>
+      <h2>Select Opponent</h2>
+      <div class="fighter-select" id="opponent-select"></div>
+      <button
+        class="start-fight-btn"
+        onclick="startFight()"
+        id="start-btn"
+        disabled
+      >
+        Start Fight
+      </button>
+    </div>
+
+    <div class="arena" id="arena" style="display: none">
+        <div id="action-log"></div>
+
+  <div class="spotlight"></div>
+        <div class="octagon"></div>
+        <div class="crowd"></div>
+      <div class="health" id="p1-health">
+        <div class="label">Player</div>
+        <div class="bar" id="p1-bar"></div>
+      </div>
+      <div class="health" id="p2-health">
+        <div class="label">Opponent</div>
+        <div class="bar" id="p2-bar"></div>
+      </div>
+      <div
+        class="health"
+        id="p1-stamina"
+        style="top: 70px; left: 30px; width: 350px"
+      >
+        <div class="label">Stamina</div>
+        <div
+          class="bar"
+          id="p1-stamina-bar"
+          style="background: linear-gradient(90deg, #00ffff, #004466)"
+        ></div>
+      </div>
+      <div
+        class="health"
+        id="p2-stamina"
+        style="top: 70px; right: 30px; width: 350px"
+      >
+        <div class="label">Stamina</div>
+        <div
+          class="bar"
+          id="p2-stamina-bar"
+          style="background: linear-gradient(90deg, #00ffff, #004466)"
+        ></div>
+      </div>
+      <div class="fighter left" id="fighter1">
+        <img src="" alt="" id="p1-img" />
+        <span id="p1-name">P1</span>
+      </div>
+
+     
+
+      <div class="fighter right" id="fighter2">
+        <img src="" alt="" id="p2-img" />
+        <span id="p2-name">P2</span>
+      </div>
+      <div class="controls">
+        <button onclick="playerAttack('punch')">Punch (A)</button>
+        <button onclick="playerAttack('kick')">Kick (S)</button>
+        <button onclick="playerBlock()">Block (D)</button>
+      </div>
+      <div class="game-over" id="game-over">
+        <h2 id="winner-text">WINNER!</h2>
+        <button onclick="restartGame()">Play Again</button>
+        <button onclick="backToLobby()">Back to Lobby</button>
+      </div>
+    </div>
+
+    <script>
+        function showActionLog(text) {
+  const log = document.getElementById("action-log");
+  log.textContent = text;
+  log.style.animation = "none";
+  log.offsetHeight; // trigger reflow to restart animation
+  log.style.animation = "fadeOut 2s ease-out forwards";
+}
+
+        let walkoutAudio = null;
+
+      const fighters = [
+        {
+          name: "Akaki",
+          img: "https://scontent.ftbs5-2.fna.fbcdn.net/v/t1.15752-9/514434756_713185394861477_7705537185801404233_n.jpg?stp=dst-jpg_p480x480_tt6&_nc_cat=108&ccb=1-7&_nc_sid=0024fc&_nc_ohc=RtMZDEmFdnoQ7kNvwFv_T-E&_nc_oc=AdmWX0gHYwm-Po-IS5BtjdBNZXKAgrQQn57LOARLTB5BSUpi8W39OA2URnpzlvGcqWk&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.ftbs5-2.fna&oh=03_Q7cD2gGnXQP1olyEVfgOSjfNm0Xr3f8DKIzXhSbphimxmkoG4A&oe=6888A84B",
+          power: 100,
+          defense: 90,
+          stamina: 100,
+          walkoutSong: "i-dont-like-you-87027.mp3"
+        },
+
+          {
+          name: "Baso",
+          img: "https://instagram.ftbs5-2.fna.fbcdn.net/v/t1.15752-9/495048823_946866817503223_3653553517473129448_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=103&ccb=1-7&_nc_sid=0024fc&_nc_ohc=9rJRo6-DohUQ7kNvwHYUgL9&_nc_oc=AdnwZ1MsB9LJLg3OSwbmpRZGcGkcL457vloStpTF7156lEUYONwHtEN1Tipxl2f45wE&_nc_zt=23&_nc_ht=instagram.ftbs5-2.fna&oh=03_Q7cD2gFgGX6vpuow8PgnQ8inzeUsrDxUVUe0-4mC6rtKMvRMYw&oe=6888BD16",
+          power: 95,
+          defense: 90,
+          stamina: 100,
+          walkoutSong: "Untitled video - Made with Clipchamp (audio-extractor.net).mp3"
+        },
+        {
+            name:"Tsiklara",
+            img:"https://video.xx.fbcdn.net/v/t69.46293-2/510592865_1281081046699950_7592853280411706265_n.?stp=dst-jpg_p480x480_tt6&_nc_cat=104&ccb=1-7&_nc_sid=942482&_nc_ohc=4gLHpWY-PsIQ7kNvwHuoj9F&_nc_oc=AdmgeU2xdjIS5rM_ksf6wJYht3RDI6etWJzqR-JgIg0vxnZlz3utnr42bB1wv_ZqgI8&_nc_zt=28&_nc_ht=scontent.ftbs5-2.fna&_nc_gid=n8mo1wXr_lSbLs5CqKq4Vw&oh=03_Q7cD2gG8TFl1dOf6FP5HfeDox4t098ssIraQjQixVX2jTzqh9g&oe=68630C14",
+            power: 100,
+            defense: 100,
+            stamina: 100,
+            walkoutSong: "Screen Recording 2025-06-29 174215 (audio-extractor.net).mp3"
+        },
+        {
+          name: "Merab Dvalishvili",
+          img: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ_wV3X7jhoCG2TppeKNh_wdcRyg87v2e4RwHF9cmDmTBf1dU2JERdb9FqAAmAquggpSYJ7tRi6BeGd36mKpJx8xYz-ETnrWQpiMu0oW0x8gg",
+          power: 85,
+          defense: 90,
+          stamina: 120,
+        },
+        {
+          name: "Conor McGregor",
+          img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=150&h=150&fit=crop&crop=face",
+          power: 90,
+          defense: 75,
+          stamina: 100,
+        },
+        {
+          name: "Charles Oliveira",
+          img: "https://images.unsplash.com/photo-1567013127542-490d757e51ca?w=150&h=150&fit=crop&crop=face",
+          power: 90,
+          defense: 80,
+          stamina: 100,
+        },
+        {
+          name: "Jon Jones",
+    img: "https://www.pngmart.com/files/22/Jon-Jones-PNG-Pic.png",
+    power: 92,
+    defense: 88,
+    stamina: 100
+
+          
+        },
+        {
+          name: "Ilia Topuria",
+          img: "https://images.unsplash.com/photo-1566753323558-f4e0952af115?w=150&h=150&fit=crop&crop=face",
+          power: 93,
+          defense: 82,
+          stamina: 100,
+        },
+        {
+          name: "Islam Makhachev",
+          img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=150&h=150&fit=crop&crop=face",
+          power: 87,
+          defense: 85,
+          stamina: 100,
+        },
+        {
+          name: "khabib Nurmagomedov",
+          img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=150&h=150&fit=crop&crop=face",
+          power: 90,
+          defense: 85,
+          stamina: 100,
+
+        },
+        {
+          name: "Alexander Volkanovski",
+          img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=150&h=150&fit=crop&crop=face",
+          power: 88,
+          defense: 90,
+          stamina: 100,
+
+        },
+        {
+          name: "Max Holloway",
+          img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=150&h=150&fit=crop&crop=face",
+          power: 85,
+          defense: 87,
+          stamina: 100,
+
+        },
+        {
+          name: "Dustin Poirier",
+          img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=150&h=150&fit=crop&crop=face",
+          power: 89,
+          defense: 86,
+          stamina: 100,
+        },
+        {
+          name: "Justin Gaethje",
+          img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=150&h=150&fit=crop&crop=face",
+          power: 91,
+          defense: 84,
+          stamina: 100,
+        },
+        {
+          name: "Aljamain Sterling",
+          img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=150&h=150&fit=crop&crop=face",
+          power: 86,
+          defense: 89,
+          stamina: 100,
+        },
+        {
+          name: "Sean O'Malley",
+          img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=150&h=150&fit=crop&crop=face",
+          power: 88,
+          defense: 83,
+          stamina: 100,
+        },
+//        
+      ];
+      function playSound(id) {
+  const audio = document.getElementById(id);
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play();
+  }
+  
+    if (id === "ko-sound") {
+        document.getElementById("game-over").style.display = "flex";
+        document.getElementById("winner-text").textContent = "KO!";
+        playSound("ko-sound");
+        gameState.gameActive = false;
+        clearInterval(aiInterval);
+    }
+    }
+    
+        function playerBlock() {
+            if (!gameState.gameActive) return;
+            if (gameState.playerBlocking) return;
+            gameState.playerBlocking = true;
+            changeStamina("player", -5);
+            playSound("block-sound");
+            document.getElementById("fighter1").classList.add("blocking");
+            setTimeout(() => {
+            gameState.playerBlocking = false;
+            document.getElementById("fighter1").classList.remove("blocking");
+            }, 500);
+        }
+    
+        function opponentBlock() {
+            if (!gameState.gameActive) return;
+            if (gameState.opponentBlocking) return;
+            gameState.opponentBlocking = true;
+            changeStamina("opponent", -5);
+            playSound("block-sound");
+            document.getElementById("fighter2").classList.add("blocking");
+            setTimeout(() => {
+            gameState.opponentBlocking = false;
+            document.getElementById("fighter2").classList.remove("blocking");
+            }, 500);
+        }
+    
+        function startAI() {
+            aiInterval = setInterval(() => {
+            if (!gameState.gameActive) return;
+    
+            const action = Math.random();
+            if (action < 0.4) {
+                opponentAttack("punch");
+            } else if (action < 0.8) {
+                opponentAttack("kick");
+            } else {
+                opponentBlock();
+            }
+            }, 2000);
+        }
+    
+        function opponentAttack(type) {
+            if (!gameState.gameActive) return;
+            const fighter2 = document.getElementById("fighter2");
+            fighter2.classList.add(type === "kick" ? "kicking" : "punching");
+    
+            setTimeout(() => {
+            fighter2.classList.remove(type === "kick" ? "kicking" : "punching");
+            }, 300);
+    
+            const cost = type === "kick" ? 15 : 10;
+            if (gameState.opponentStamina < cost) return;
+    
+            changeStamina("opponent", -cost);
+            
+            let damage = type === "kick" ? 15 : 10;
+            if (gameState.playerBlocking) {
+                damage = Math.max(0, damage - selectedOpponent.defense / 10);
+                showActionLog("Player blocked the attack!");
+            } else {
+                showActionLog(type === "kick" ? "Opponent Kick! 🦵" : "Opponent Punch! 👊");
+            }
+            gameState.playerHP = Math.max(0, gameState.playerHP - damage);
+            updateHealthBars(); 
+}
+
+
+      let selectedPlayer = null;
+      let selectedOpponent = null;
+      let aiInterval = null;
+      let gameState = {
+        playerHP: 100,
+        opponentHP: 100,
+        playerBlocking: false,
+        opponentBlocking: false,
+       playerStamina: selectedPlayer?.stamina ?? 100,
+        opponentStamina: selectedOpponent?.stamina ?? 100,
+
+
+        gameActive: false,
+      };
+
+      function renderFighters(containerId, callback) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        fighters.forEach((fighter) => {
+          const card = document.createElement("div");
+          card.className = "fighter-card";
+          card.innerHTML = `
+          <img src="${fighter.img}" alt="${fighter.name}" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+          <p>${fighter.name}</p>
+        `;
+          card.onclick = () => callback(fighter, card, containerId);
+          container.appendChild(card);
+        });
+      }
+
+      function selectFighter(fighter, card, containerId) {
+        const container = document.getElementById(containerId);
+        container
+          .querySelectorAll(".fighter-card")
+          .forEach((c) => c.classList.remove("selected"));
+        card.classList.add("selected");
+        if (containerId === "fighter-select") {
+          selectedPlayer = fighter;
+        } else {
+          selectedOpponent = fighter;
+        }
+        document.getElementById("start-btn").disabled = !(
+          selectedPlayer && selectedOpponent
+        );
+      }
+
+      function updateHealthBars() {
+        document.getElementById("p1-bar").style.width =
+          gameState.playerHP + "%";
+        document.getElementById("p2-bar").style.width =
+          gameState.opponentHP + "%";
+      }
+
+      function updateStaminaBars() {
+        document.getElementById("p1-stamina-bar").style.width =
+          gameState.playerStamina + "%";
+        document.getElementById("p2-stamina-bar").style.width =
+          gameState.opponentStamina + "%";
+      }
+
+      function changeStamina(who, amt) {
+        let key = who + "Stamina";
+        gameState[key] = Math.max(0, Math.min(100, gameState[key] + amt));
+        updateStaminaBars();
+      }
+
+        function startFight() {
+  if (!selectedPlayer || !selectedOpponent) {
+    alert("Please select both fighters!");
+    return;
+  }
+
+  // Play walkout music
+  if (selectedPlayer.walkoutSong) {
+    walkoutAudio = new Audio(selectedPlayer.walkoutSong);
+    walkoutAudio.volume = 0.6;
+    walkoutAudio.play();
+
+    // Stop music after 5 seconds and load arena
+    setTimeout(() => {
+      walkoutAudio.pause();
+      walkoutAudio.currentTime = 0;
+      initFight();
+    }, 5000);
+  } else {
+    initFight();
+  }
+}
+      function initFight() {
+  document.getElementById("lobby").style.display = "none";
+  document.getElementById("arena").style.display = "flex";
+  document.getElementById("p1-name").textContent = selectedPlayer.name;
+  document.getElementById("p2-name").textContent = selectedOpponent.name;
+  document.getElementById("p1-img").src = selectedPlayer.img;
+  document.getElementById("p2-img").src = selectedOpponent.img;
+
+  gameState = {
+    playerHP: 100,
+    opponentHP: 100,
+    playerBlocking: false,
+    opponentBlocking: false,
+    playerStamina: selectedPlayer.stamina ?? 100,
+    opponentStamina: selectedOpponent.stamina ?? 100,
+    gameActive: true
+  };
+
+  updateHealthBars();
+  updateStaminaBars();
+  startAI();
+}
+
+
+      function createHitEffect(x, y) {
+        const effect = document.createElement("div");
+        effect.className = "hit-effect";
+        effect.style.left = `${x - 50}px`;
+        effect.style.top = `${y - 50}px`;
+        document.getElementById("arena").appendChild(effect);
+        setTimeout(() => {
+          effect.style.animation = "hitFlash 0.5s forwards";
+          setTimeout(() => effect.remove(), 500);
+        }, 10);
+      }
+
+      function createBloodEffect(x, y) {
+        const effect = document.createElement("div");
+        effect.className = "blood-effect";
+        effect.style.left = `${x - 10}px`;
+        effect.style.top = `${y - 10}px`;
+        document.getElementById("arena").appendChild(effect);
+        setTimeout(() => {
+          effect.style.animation = "bloodSplat 0.8s forwards";
+          setTimeout(() => effect.remove(), 800);
+        }, 10);
+      }
+
+      function playerAttack(type) {
+        if (type === "kick") {
+  playSound("kick-sound");
+} else {
+  playSound("punch-sound");
+}
+
+        if (!gameState.gameActive) return;
+        const cost = type === "kick" ? 15 : 10;
+        if (gameState.playerStamina < cost) return;
+        changeStamina("player", -cost);
+        const damage = type === "kick" ? 15 : 10;
+        const fighter1 = document.getElementById("fighter1");
+        const fighter2 = document.getElementById("fighter2");
+        const fighter2Rect = fighter2.getBoundingClientRect();
+        const hitX = fighter2Rect.left + fighter2Rect.width / 2;
+        const hitY = fighter2Rect.top + fighter2Rect.height / 2;
+        if (type === "kick") {
+          fighter1.classList.add("kicking");
+          setTimeout(() => fighter1.classList.remove("kicking"), 400);
+        } else {
+          fighter1.classList.add("punching");
+          setTimeout(() => fighter1.classList.remove("punching"), 300);
+        }
+        if (!gameState.opponentBlocking) {
+          setTimeout(
+            () => {
+              gameState.opponentHP = Math.max(0, gameState.opponentHP - damage);
+              updateHealthBars();
+              createHitEffect(hitX, hitY);
+              createBloodEffect(hitX, hitY);
+              fighter2.classList.add("hit");
+              setTimeout(() => fighter2.classList.remove("hit"), 500);
+              checkGameOver();
+            },
+            type === "kick" ? 200 : 150
+          );
+        }
+      }
+
+      function playerBlock() {
+        playSound("block-sound");
+
+        if (!gameState.gameActive) return;
+        gameState.playerBlocking = true;
+        const fighter1 = document.getElementById("fighter1");
+        fighter1.classList.add("blocking");
+        setTimeout(() => {
+          gameState.playerBlocking = false;
+          fighter1.classList.remove("blocking");
+        }, 1000);
+      }
+
+      function aiTurn() {
+        if (!gameState.gameActive) return;
+        const stamina = gameState.opponentStamina;
+        const hpRatio = gameState.opponentHP / (gameState.playerHP || 1);
+        let move;
+        if (stamina < 15) {
+          move = Math.random() < 0.7 ? "block" : "rest";
+        } else if (hpRatio > 1.2) {
+          move = Math.random() < 0.7 ? "attack" : "block";
+        } else if (hpRatio < 0.8) {
+          move = Math.random() < 0.5 ? "block" : "attack";
+        } else {
+          move = Math.random() < 0.5 ? "attack" : "block";
+        }
+        const fighter2 = document.getElementById("fighter2");
+        const fighter1 = document.getElementById("fighter1");
+        const fighter1Rect = fighter1.getBoundingClientRect();
+        const hitX = fighter1Rect.left + fighter1Rect.width / 2;
+        const hitY = fighter1Rect.top + fighter1Rect.height / 2;
+        if (move === "attack") {
+          const type = stamina >= 15 && Math.random() < 0.5 ? "kick" : "punch";
+          const cost = type === "kick" ? 15 : 10;
+          if (stamina < cost) return;
+          changeStamina("opponent", -cost);
+          if (type === "kick") {
+            fighter2.classList.add("kicking");
+            setTimeout(() => fighter2.classList.remove("kicking"), 400);
+          } else {
+            fighter2.classList.add("punching");
+            setTimeout(() => fighter2.classList.remove("punching"), 300);
+          }
+          if (!gameState.playerBlocking) {
+            setTimeout(
+              () => {
+                gameState.playerHP = Math.max(
+                  0,
+                  gameState.playerHP - (type === "kick" ? 15 : 10)
+                );
+                updateHealthBars();
+                createHitEffect(hitX, hitY);
+                createBloodEffect(hitX, hitY);
+                fighter1.classList.add("hit");
+                setTimeout(() => fighter1.classList.remove("hit"), 500);
+                checkGameOver();
+              },
+              type === "kick" ? 200 : 150
+            );
+          }
+        } else if (move === "block") {
+          gameState.opponentBlocking = true;
+          fighter2.classList.add("blocking");
+          setTimeout(() => {
+            gameState.opponentBlocking = false;
+            fighter2.classList.remove("blocking");
+          }, 1000);
+        }
+        // else rest: do nothing, stamina will recover passively
+      }
+
+      function checkGameOver() {
+  
+        
+        if (gameState.playerHP <= 0 || gameState.opponentHP <= 0) {
+          gameState.gameActive = false;
+          clearInterval(aiInterval);
+          const winner =
+            gameState.playerHP > 0
+              ? selectedPlayer.name
+              : selectedOpponent.name;
+          document.getElementById("winner-text").textContent =
+            winner + " WINS!";
+            playSound("ko-sound")
+          document.getElementById("game-over").style.display = "block";
+          const loser =
+            gameState.playerHP > 0
+              ? document.getElementById("fighter2")
+              : document.getElementById("fighter1");
+          loser.classList.add("knockout");
+        }
+              
+      }
+
+      function startAI() {
+        aiInterval = setInterval(aiTurn, 2000);
+      }
+
+      function restartGame() {
+        document.getElementById("game-over").style.display = "none";
+        document
+          .querySelector(".fighter.knockout")
+          .classList.remove("knockout");
+        startFight();
+      }
+
+      function backToLobby() {
+        document.getElementById("game-over").style.display = "none";
+        document.getElementById("arena").style.display = "none";
+        document.getElementById("lobby").style.display = "flex";
+        clearInterval(aiInterval);
+        document
+          .querySelector(".fighter.knockout")
+          .classList.remove("knockout");
+      }
+
+      // Keyboard controls
+      document.addEventListener("keydown", (e) => {
+        if (!gameState.gameActive) return;
+        switch (e.key.toLowerCase()) {
+          case "a":
+            playerAttack("punch");
+            break;
+          case "s":
+            playerAttack("kick");
+            break;
+          case "d":
+            playerBlock();
+            break;
+        }
+      });
+
+      // Passive stamina recovery
+     setInterval(() => {
+  if (gameState.gameActive) {
+    const playerRegen = gameState.playerBlocking ? 10 : 5;
+    const opponentRegen = gameState.opponentBlocking ? 5 : 1;
+    changeStamina("player", playerRegen);
+    changeStamina("opponent", opponentRegen);
+  }
+}, 1000);
+
+
+      // Initialize the game
+      renderFighters("fighter-select", selectFighter);
+      renderFighters("opponent-select", selectFighter);
+    </script>
+  </body>
+</html>
