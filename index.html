@@ -756,81 +756,131 @@
     transform: translateX(-50%) translateZ(60px) scale(1.2);
   }
 }
-@media (max-width: 768px) {
-  .lobby h1 {
-    font-size: 2rem;
-    text-align: center;
-  }
+ @media (max-width: 768px) {
+        .lobby h1 {
+          font-size: 2rem;
+          text-align: center;
+        }
 
-  .lobby h2 {
-    font-size: 1.2rem;
-    text-align: center;
-  }
+        .fighter-select {
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 10px;
+        }
 
-  .fighter-card {
-    width: 120px;
-    height: 160px;
-  }
+        .fighter-card {
+          width: 100px;
+          height: 140px;
+        }
 
-  .start-fight-btn {
-    padding: 10px 20px;
-    font-size: 1.2rem;
-  }
+        .controls {
+          flex-direction: column;
+          position: fixed;
+          bottom: 10px;
+          width: 100%;
+          gap: 10px;
+          z-index: 999;
+          padding: 0 10px;
+        }
 
-  .fighter img {
-    max-width: 180px;
-    max-height: 180px;
-  }
+        .controls button {
+          width: 100%;
+          font-size: 1rem;
+          padding: 12px;
+        }
 
-  .controls {
-    flex-direction: column;
-    bottom: 10px;
-    gap: 10px;
-  }
+        .health {
+          width: 90vw !important;
+          margin: 5px auto;
+          position: relative !important;
+          left: auto !important;
+          right: auto !important;
+        }
 
-  .controls button {
-    width: 80vw;
-    font-size: 1rem;
-    padding: 12px 10px;
-  }
+        .fighter.left,
+        .fighter.right {
+          position: relative;
+          margin: 10px auto;
+          transform: none;
+        }
 
-  .health {
-    width: 80vw !important;
-    left: 10% !important;
-    right: auto !important;
-  }
+        .fighter img {
+          max-width: 180px;
+        }
 
-  #p2-health, #p2-stamina {
-    left: 10% !important;
-    right: auto !important;
-  }
+        #vs-text {
+          font-size: 2.2rem;
+          top: 80px;
+        }
 
-  #vs-text {
-    font-size: 2.5rem;
-    top: 100px;
-  }
+        #action-log {
+          font-size: 1.2rem;
+          bottom: 120px;
+          width: 100%;
+          text-align: center;
+        }
+      }
 
-  #action-log {
-    font-size: 1.5rem;
-    bottom: 120px;
-  }
+      @media (max-height: 420px) and (orientation: landscape) {
+        .arena {
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: space-evenly;
+          align-items: center;
+          padding: 10px;
+        }
 
-  .fighter.left,
-  .fighter.right {
-    left: auto;
-    right: auto;
-    bottom: 60px;
-    transform: translateX(0) translateZ(50px);
-  }
+        .fighter.left,
+        .fighter.right {
+          max-width: 40%;
+          transform: none;
+          margin: 0 10px;
+        }
 
-  .fighter.left {
-    transform: translateX(-40%) translateZ(50px);
-  }
+        .controls {
+          flex-direction: row;
+          bottom: 5px;
+          gap: 10px;
+          width: 100%;
+          justify-content: center;
+          padding: 0 10px;
+          position: fixed;
+        }
 
-  .fighter.right {
-    transform: translateX(40%) translateZ(50px);
-  }
-}
+        .controls button {
+          min-width: 80px;
+          font-size: 0.9rem;
+        }
+
+        .health, #p1-stamina, #p2-stamina {
+          width: 40vw !important;
+          height: 20px;
+          margin: 5px;
+          top: 10px !important;
+          position: absolute;
+        }
+
+        #p1-health {
+          left: 10px;
+        }
+
+        #p2-health {
+          right: 10px;
+        }
+
+        #vs-text {
+          font-size: 2rem;
+          top: 40px;
+        }
+
+        #action-log {
+          font-size: 1rem;
+          bottom: 70px;
+          width: 100%;
+          text-align: center;
+        }
+      }
 
 
 
@@ -937,7 +987,7 @@
           power: 100,
           defense: 90,
           stamina: 100,
-          walkoutSong: "i-dont-like-you-87027.mp3"
+          walkoutSong: "Screen Recording 2025-06-29 183753.mp3"
         },
 
           {
@@ -1063,7 +1113,7 @@
   
     if (id === "ko-sound") {
         document.getElementById("game-over").style.display = "flex";
-        document.getElementById("winner-text").textContent = "KO!";
+        document.getElementById("winner-text").textContent = "KO! " + selectedPlayer.name;
         playSound("ko-sound");
         gameState.gameActive = false;
         clearInterval(aiInterval);
