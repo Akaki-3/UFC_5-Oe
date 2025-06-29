@@ -756,6 +756,82 @@
     transform: translateX(-50%) translateZ(60px) scale(1.2);
   }
 }
+@media (max-width: 768px) {
+  .lobby h1 {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .lobby h2 {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .fighter-card {
+    width: 120px;
+    height: 160px;
+  }
+
+  .start-fight-btn {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+  }
+
+  .fighter img {
+    max-width: 180px;
+    max-height: 180px;
+  }
+
+  .controls {
+    flex-direction: column;
+    bottom: 10px;
+    gap: 10px;
+  }
+
+  .controls button {
+    width: 80vw;
+    font-size: 1rem;
+    padding: 12px 10px;
+  }
+
+  .health {
+    width: 80vw !important;
+    left: 10% !important;
+    right: auto !important;
+  }
+
+  #p2-health, #p2-stamina {
+    left: 10% !important;
+    right: auto !important;
+  }
+
+  #vs-text {
+    font-size: 2.5rem;
+    top: 100px;
+  }
+
+  #action-log {
+    font-size: 1.5rem;
+    bottom: 120px;
+  }
+
+  .fighter.left,
+  .fighter.right {
+    left: auto;
+    right: auto;
+    bottom: 60px;
+    transform: translateX(0) translateZ(50px);
+  }
+
+  .fighter.left {
+    transform: translateX(-40%) translateZ(50px);
+  }
+
+  .fighter.right {
+    transform: translateX(40%) translateZ(50px);
+  }
+}
+
 
 
     </style>
@@ -799,7 +875,7 @@
       <div
         class="health"
         id="p1-stamina"
-        style="top: 70px; left: 30px; width: 350px"
+        style="top: 70px; left: 30px; width: 80%; max-width: 350px;"
       >
         <div class="label">Stamina</div>
         <div
@@ -811,7 +887,7 @@
       <div
         class="health"
         id="p2-stamina"
-        style="top: 70px; right: 30px; width: 350px"
+        style="top: 70px; right: 30px;width: 80%; max-width: 350px;"
       >
         <div class="label">Stamina</div>
         <div
