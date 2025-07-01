@@ -29,9 +29,9 @@
         {
             name:"Dachi 'Monk' Tsiklauri",
             img:"https://scontent.ftbs5-4.fna.fbcdn.net/v/t1.15752-9/509610714_1303335878130583_6411762013009333125_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=0024fc&_nc_ohc=Lv9AFqXXAUsQ7kNvwFj62uh&_nc_oc=AdkonyF8pbQU2ANjdEMNvf2B7GWCGlxqOof9b_lKCxhIm7ARWDG-uLHj9z1gpgoLSIM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.ftbs5-4.fna&oh=03_Q7cD2gFpnGhdLlXjPRg6iqtg9X23pFZKpu2PMfG4H1G5vfmzrg&oe=6889DD15",
-            power: 100,
-            defense: 100,
-            stamina: 100,
+            power: 130,
+            defense: 130,
+            stamina: 130,
             walkoutSong: "Screen Recording 2025-06-29 174215 (audio-extractor.net).mp3"
         },
         {
@@ -44,16 +44,16 @@
         {
           name: "Davit 'El Kvahador' Badridze",
           img: "https://scontent.ftbs5-3.fna.fbcdn.net/v/t1.15752-9/509587954_2534273973580198_7131695336244765271_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=0024fc&_nc_ohc=CZdxGwf8HuAQ7kNvwERmnzS&_nc_oc=AdkRukjP380D8Lb8PeLU3SyAFeZjUBuxq0bXBiVYMO_E4bYr-I4S_IWhZ-uX6YIOmpg&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.ftbs5-3.fna&oh=03_Q7cD2gGJTgr68-iWMOru0Rclu-6e2zHz7PxxeSafDINNXDcGNg&oe=688A0CD1",
-          power: 10   0,
+          power: 100,
           defense: 100,
           stamina: 100,
         },
         {
           name: "Saba 'Xanga' Lataria",
           img: "https://scontent.ftbs5-2.fna.fbcdn.net/v/t1.15752-9/509433350_781866944522008_726902806990498873_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=0024fc&_nc_ohc=E_4-qyBFmUYQ7kNvwE4qWsV&_nc_oc=AdnAnBPX5iT3x9nk9tJOS9fycH194I2wp9P6JAgJzRok332Q-TH6MSdy6UMNLzKUZyg&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.ftbs5-2.fna&oh=03_Q7cD2gF7BkbOk8ZxwLv2EiX_YsWZ0mB-MCZW_dY0CiQTgoCdXg&oe=6889DDEE",
-          power: 90,
-          defense: 80,
-          stamina: 100,
+          power: 140,
+          defense: 140,
+          stamina: 130,
         },
         {
           name: "Jon Jones",
